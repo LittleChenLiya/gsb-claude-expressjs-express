@@ -16,6 +16,7 @@ This page contains list of examples using Express.
 - [mvc](./mvc) - MVC-style controllers
 - [online](./online) - Tracking online user activity with `online` and `redis` packages
 - [params](./params) - Working with route parameters
+- [redirect-safe](./redirect-safe) - Policy-checked login return-to redirects with `res.redirectSafe()`
 - [resource](./resource) - Multiple HTTP operations on the same resource
 - [route-map](./route-map) - Organizing routes using a map
 - [route-middleware](./route-middleware) - Working with route middleware
