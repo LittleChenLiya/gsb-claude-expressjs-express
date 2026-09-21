@@ -11,6 +11,7 @@ This page contains list of examples using Express.
 - [error-pages](./error-pages) - Creating error pages
 - [error](./error) - Working with error middleware
 - [hello-world](./hello-world) - Simple request handler
+- [json-lines](./json-lines) - Streaming newline-delimited JSON (NDJSON) with res.jsonLines()
 - [markdown](./markdown) - Markdown as template engine
 - [multi-router](./multi-router) - Working with multiple Express routers
 - [mvc](./mvc) - MVC-style controllers
