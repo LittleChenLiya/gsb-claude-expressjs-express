@@ -13,6 +13,7 @@
 - [Features](#features)
 - [Docs \& Community](#docs--community)
 - [Quick Start](#quick-start)
+- [Rendering views](#rendering-views)
 - [Philosophy](#philosophy)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -115,6 +116,38 @@ npm start
 ```
 
   View the website at: http://localhost:3000
+
+## Rendering views
+
+  Views can be rendered with either callbacks or promises, and template engines
+  may complete by invoking their callback, returning a promise, or both; the
+  first completion wins and late promise rejections are consumed internally.
+
+  The classic callback APIs forward errors to error-handling middleware by
+  default:
+
+```js
+app.render('email', { name: 'Tobi' }, (err, html) => { /* ... */ })
+res.render('email', { name: 'Tobi' }) // sends html, or next(err) on failure
+```
+
+  The promise counterparts return the outcome to the caller instead; errors
+  reject the returned promise and are never passed to `next()` implicitly:
+
+```js
+const html = await app.renderAsync('email', { name: 'Tobi' })
+
+app.get('/', async (req, res, next) => {
+  try {
+    await res.renderAsync('email', { name: 'Tobi' }) // renders, then sends
+  } catch (err) {
+    next(err) // error handling is up to the caller
+  }
+})
+```
+
+  `res.renderAsync()` also rejects if the client closes the connection before
+  rendering finishes, discarding the late result without writing to the socket.
 
 ## Philosophy
 
