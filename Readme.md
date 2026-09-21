@@ -11,6 +11,7 @@
 
 - [Installation](#installation)
 - [Features](#features)
+- [View rendering](#view-rendering)
 - [Docs \& Community](#docs--community)
 - [Quick Start](#quick-start)
 - [Philosophy](#philosophy)
@@ -77,6 +78,49 @@ for more information.
   * View system supporting 14+ template engines
   * Content negotiation
   * Executable for generating applications quickly
+
+## View rendering
+
+Express supports both callback-style and promise-returning template engines.
+When an engine returns a promise, its settlement is unified with the callback
+into the same render pipeline: the first completion wins, later completions
+(including late rejections) are consumed silently, and a synchronous throw
+from the engine is treated as a render error.
+
+The classic callback APIs are unchanged:
+
+```js
+app.render('email', { name: 'Tobi' }, function (err, html) {
+  // err is a render error, html the rendered string
+})
+
+app.use(function (req, res) {
+  // without a callback, render errors are forwarded with next(err)
+  res.render('email', { name: 'Tobi' })
+})
+```
+
+The promise-based variants return the rendered string and, for
+`res.renderAsync`, also send the response. Errors reject the returned
+promise instead of being forwarded with `next(err)`, so the caller is
+responsible for catching them:
+
+```js
+const html = await app.renderAsync('email', { name: 'Tobi' })
+
+app.use(async function (req, res, next) {
+  try {
+    const html = await res.renderAsync('email', { name: 'Tobi' })
+    // response already sent; html is the rendered string
+  } catch (err) {
+    // render failed (or the client closed the connection mid-render)
+    next(err)
+  }
+})
+```
+
+Neither new method mutates the passed `options` object; `app.locals`,
+`res.locals`, and explicit options keep their usual precedence.
 
 ## Docs & Community
 
