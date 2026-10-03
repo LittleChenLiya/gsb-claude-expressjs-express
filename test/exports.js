@@ -24,6 +24,12 @@ describe('exports', function(){
     assert.equal(express.static.length, 2)
   })
 
+  it('should expose strictQuery middleware', function () {
+    assert.equal(typeof express.strictQuery, 'function')
+    assert.equal(express.strictQuery.length, 1)
+    assert.equal(typeof express.strictQuery.parse, 'function')
+  })
+
   it('should expose text middleware', function () {
     assert.equal(typeof express.text, 'function')
     assert.equal(express.text.length, 1)
