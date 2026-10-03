@@ -146,6 +146,53 @@ npm install
 node examples/content-negotiation
 ```
 
+## If-Match precondition middleware
+
+`express.ifMatch(options)` checks the `If-Match` request header against the
+current strong [entity tag](https://httpwg.org/specs/rfc9110.html#field.if-match)
+of a resource before calling `next()`. It is an optional middleware: the
+caller supplies the current strong ETag, and the middleware is only
+responsible for the check. It never updates storage.
+
+```js
+app.patch('/widgets/:id',
+  express.ifMatch({
+    // Provide the current strong entity tag for the resource.
+    // Called at most once per request. May return a promise or call
+    // the callback. An error is propagated (not turned into a 412).
+    getEtag: function (req, callback) {
+      db.getEtag(req.params.id, callback)
+    },
+    // Optional. When true, a missing If-Match header yields 428.
+    // Defaults to false (a missing header means no precondition).
+    requireHeader: true
+  }),
+  function (req, res) {
+    // The precondition matched. Perform the update.
+  }
+)
+```
+
+The header is parsed as either the wildcard `*` or a comma-separated list
+of quoted entity tags. Commas inside a quoted tag are literal characters,
+not separators. Weak tags (`W/"..."`) are never accepted by the strong
+comparison, even when the opaque tag matches. Status codes:
+
+- `400` malformed `If-Match` header
+- `412` precondition failed (no strong match)
+- `428` precondition required (missing header, only with `requireHeader`)
+
+### Important: passing the check does not make an update safe
+
+This middleware only verifies the precondition; it does not eliminate the
+race window. Two concurrent requests can both pass the check and then race
+when updating. Downstream handlers must still perform the actual update
+atomically, for example with a versioned compare-and-swap that writes the
+new value only when the stored version still equals the ETag the client
+supplied. If the update is not conditional on the version, the lost-update
+problem remains even though every request passed `If-Match`. See
+`examples/if-match` for a short local demonstration.
+
 ## Contributing
 
 The Express.js project welcomes all constructive contributions. Contributions take many forms,
