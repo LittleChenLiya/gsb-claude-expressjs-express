@@ -11,6 +11,7 @@ This page contains list of examples using Express.
 - [error-pages](./error-pages) - Creating error pages
 - [error](./error) - Working with error middleware
 - [hello-world](./hello-world) - Simple request handler
+- [if-match](./if-match) - Enforcing the `If-Match` precondition on writes
 - [markdown](./markdown) - Markdown as template engine
 - [multi-router](./multi-router) - Working with multiple Express routers
 - [mvc](./mvc) - MVC-style controllers

@@ -14,6 +14,7 @@
 - [Docs \& Community](#docs--community)
 - [Quick Start](#quick-start)
 - [Philosophy](#philosophy)
+- [Optimistic concurrency with `express.ifMatch()`](#optimistic-concurrency-with-expressifmatch)
 - [Examples](#examples)
 - [Contributing](#contributing)
   - [Security Issues](#security-issues)
@@ -125,6 +126,31 @@ npm start
   Express does not force you to use any specific ORM or template engine. With support for over
   14 template engines via [@ladjs/consolidate](https://github.com/ladjs/consolidate),
   you can quickly craft your perfect framework.
+
+## Optimistic concurrency with `express.ifMatch()`
+
+  The optional [`express.ifMatch()`](./lib/middleware/if-match.md) middleware
+  enforces the `If-Match` precondition (RFC 9110) on write routes using the
+  strong comparison function. Your code supplies the resource's current
+  strong ETag; the middleware never touches storage:
+
+  - missing header: ignored by default, or `428` with `requireHeader: true`
+  - malformed header: `400`
+  - weak tags never pass the strong comparison; multiple quoted tags are
+    parsed correctly, including commas inside a quoted tag; `*` is checked
+    against explicit resource existence
+  - non-matching precondition: `412`; matching precondition: `next()`
+
+  The current ETag is queried at most once per request, and a query failure
+  is propagated as an error rather than treated as "no match".
+
+  **Passing this check is not an update lock.** Two concurrent requests can
+  both pass it and race; the downstream write must still apply its version
+  condition atomically in the storage layer (for example
+  `UPDATE ... WHERE version = ?`, compare-and-swap, or an optimistic-locking
+  transaction). See the [middleware documentation](./lib/middleware/if-match.md)
+  and the [`if-match` example](./examples/if-match) for a runnable
+  demonstration.
 
 ## Examples
 
