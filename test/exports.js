@@ -14,6 +14,11 @@ describe('exports', function(){
     assert.equal(express.json.length, 1)
   })
 
+  it('should expose cleanup middleware', function () {
+    assert.equal(typeof express.cleanup, 'function')
+    assert.equal(express.cleanup.length, 1)
+  })
+
   it('should expose raw middleware', function () {
     assert.equal(typeof express.raw, 'function')
     assert.equal(express.raw.length, 1)
