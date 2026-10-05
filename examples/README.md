@@ -17,6 +17,7 @@ This page contains list of examples using Express.
 - [online](./online) - Tracking online user activity with `online` and `redis` packages
 - [params](./params) - Working with route parameters
 - [resource](./resource) - Multiple HTTP operations on the same resource
+- [response-diagnostics](./response-diagnostics) - Diagnostics for late writes after response end
 - [route-map](./route-map) - Organizing routes using a map
 - [route-middleware](./route-middleware) - Working with route middleware
 - [route-separation](./route-separation) - Organizing routes per each resource
